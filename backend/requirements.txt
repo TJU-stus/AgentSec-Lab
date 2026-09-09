@@ -1,0 +1,7 @@
+# AgentSec-Lab backend dependencies
+# Install: pip install -r backend/requirements.txt
+fastapi
+uvicorn
+jinja2
+python-multipart
+httpx

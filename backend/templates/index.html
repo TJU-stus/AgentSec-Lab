@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}首页 · AgentSec-Lab{% endblock %}
+{% block content %}
+
+<h1>Agent 列表</h1>
+{% if agents %}
+<table>
+  <tr><th>编号</th><th>名称</th><th>描述</th><th>Dify App ID</th><th>创建时间</th><th></th></tr>
+  {% for a in agents %}
+  <tr>
+    <td>{{ a.id }}</td>
+    <td>{{ a.name }}</td>
+    <td>{{ a.description }}</td>
+    <td>{{ a.dify_app_id or "（待成员2提供）" }}</td>
+    <td>{{ a.created_at }}</td>
+    <td><a class="button" href="/agents/{{ a.id }}/run">去运行</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="empty">还没有 Agent，先在下面创建一个。</p>
+{% endif %}
+
+<h2>新建 Agent</h2>
+<form method="post" action="/agents" class="card form">
+  <label>名称
+    <input name="name" required placeholder="例如：计算小助手">
+  </label>
+  <label>描述
+    <input name="description" placeholder="例如：会算加减乘除的助手">
+  </label>
+  <label>Dify App ID
+    <input name="dify_app_id" placeholder="问成员2要，可先留空">
+  </label>
+  <button type="submit">创建</button>
+</form>
+
+<h2>最近运行</h2>
+{% if recent_runs %}
+<table>
+  <tr><th>run_id</th><th>Agent</th><th>任务</th><th>状态</th><th>提交时间</th><th></th></tr>
+  {% for r in recent_runs %}
+  <tr>
+    <td><code>{{ r.run_id }}</code></td>
+    <td>{{ r.agent_name or r.agent_id }}</td>
+    <td>{{ r.task_text }}</td>
+    <td><span class="badge {{ r.status }}">{{ {"success": "成功", "failed": "失败", "running": "运行中"}.get(r.status, r.status) }}</span></td>
+    <td>{{ r.created_at }}</td>
+    <td><a href="/runs/{{ r.run_id }}">查看记录</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="empty">还没有运行记录。</p>
+{% endif %}
+
+{% endblock %}

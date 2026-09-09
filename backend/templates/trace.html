@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}运行记录 {{ run.run_id }} · AgentSec-Lab{% endblock %}
+{% block content %}
+
+<h1>运行记录 <code>{{ run.run_id }}</code></h1>
+
+<div class="card">
+  <p>
+    Agent：<strong>{{ run.agent_name or run.agent_id }}</strong>
+    · 状态：<span class="badge {{ run.status }}">{{ {"success": "成功", "failed": "失败", "running": "运行中"}.get(run.status, run.status) }}</span>
+    · 提交：{{ run.created_at }} · 完成：{{ run.finished_at or "—" }}
+  </p>
+  <p>任务：<strong>{{ run.task_text }}</strong></p>
+  <p>最终回答：{{ run.final_answer or "（无）" }}</p>
+</div>
+
+<h2>流水账（共 {{ events|length }} 条，按发生顺序）</h2>
+{% for e in events %}
+<div class="card event {{ 'ok' if e.ok else 'bad' }}">
+  <div class="event-head">
+    <span class="seq">#{{ loop.index }}</span>
+    <span class="etype">{{ e.event_type }}</span>
+    <span class="src">来源：{{ e.source }}</span>
+    <span class="ts">{{ e.timestamp }}</span>
+  </div>
+  {% if not e.ok %}
+  <p class="warn">⚠ 记录格式校验未通过：{{ e.problems }}</p>
+  {% endif %}
+  <pre>{{ e.data_pretty }}</pre>
+</div>
+{% else %}
+<p class="empty">这次运行没有留下任何记录。</p>
+{% endfor %}
+
+<p><a href="/runs">← 返回运行历史</a></p>
+
+{% endblock %}

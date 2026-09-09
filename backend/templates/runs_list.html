@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}运行历史 · AgentSec-Lab{% endblock %}
+{% block content %}
+
+<h1>运行历史</h1>
+{% if runs %}
+<table>
+  <tr><th>run_id</th><th>Agent</th><th>任务</th><th>状态</th><th>最终回答</th><th>提交时间</th><th></th></tr>
+  {% for r in runs %}
+  <tr>
+    <td><code>{{ r.run_id }}</code></td>
+    <td>{{ r.agent_name or r.agent_id }}</td>
+    <td>{{ r.task_text }}</td>
+    <td><span class="badge {{ r.status }}">{{ {"success": "成功", "failed": "失败", "running": "运行中"}.get(r.status, r.status) }}</span></td>
+    <td>{{ r.final_answer or "—" }}</td>
+    <td>{{ r.created_at }}</td>
+    <td><a href="/runs/{{ r.run_id }}">查看记录</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="empty">还没有任何运行。去 <a href="/">首页</a> 选一个 Agent 跑一次。</p>
+{% endif %}
+
+{% endblock %}

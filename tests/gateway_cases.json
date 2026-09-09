@@ -1,0 +1,43 @@
+[
+  {
+    "_schema_version": 1,
+    "_说明": "工具网关计算器测试用例集（成员1 维护）。expect 为数字表示期望 result 等于该数字；expect 为字符串 \"reject\" 表示期望网关拒绝并给出错误提示。以 _ 开头的键是说明性条目，测试脚本会跳过，不参与测试。",
+    "_待成员2确认": [
+      "calculator 第一版支持哪几种运算（只加法？加减乘除？）",
+      "多余字段（如多传 c）应该忽略还是拒绝？",
+      "超大结果（如整数溢出边界）的行为",
+      "浮点精度比较口径（如 0.1 + 0.2 是否允许误差）"
+    ],
+    "_用法": "成员1 写用例，成员2 开发网关；tests/test_calculator.py 会逐条发送并比对结果"
+  },
+  { "id": 1, "name": "基准：两个正整数", "request": { "a": 1, "b": 2 }, "expect": 3, "note": "最简单的加法，必须通过" },
+  { "id": 2, "name": "大数相加", "request": { "a": 999999999, "b": 1 }, "expect": 1000000000, "note": "接近十亿，验证不溢出" },
+  { "id": 3, "name": "加零", "request": { "a": 7, "b": 0 }, "expect": 7, "note": "加零边界" },
+  { "id": 4, "name": "两个负数相加", "request": { "a": -5, "b": -3 }, "expect": -8, "note": "负数支持" },
+  { "id": 5, "name": "正负混合", "request": { "a": -5, "b": 8 }, "expect": 3, "note": "负数支持" },
+  { "id": 6, "name": "小数相加", "request": { "a": 1.5, "b": 2.25 }, "expect": 3.75, "note": "小数支持" },
+  { "id": 7, "name": "参数顺序无关", "request": { "a": 2, "b": 1 }, "expect": 3, "note": "交换 a、b 结果应相同" },
+  { "id": 8, "name": "32位整数边界", "request": { "a": 2147483647, "b": 1 }, "expect": 2147483648, "note": "超过 32 位 int 最大值，验证用大整数或浮点都能正确算" },
+  { "id": 9, "name": "科学计数法", "request": { "a": 1e2, "b": 1 }, "expect": 101, "note": "JSON 合法数字写法，应正常解析" },
+  { "id": 10, "name": "传中文：单个汉字", "request": { "a": "一", "b": 2 }, "expect": "reject", "note": "非数字输入必须拒绝" },
+  { "id": 11, "name": "传中文：数字汉字", "request": { "a": "一二三", "b": 2 }, "expect": "reject", "note": "看着像数但不是数" },
+  { "id": 12, "name": "传英文字母", "request": { "a": "abc", "b": 2 }, "expect": "reject", "note": "非数字输入必须拒绝" },
+  { "id": 13, "name": "传算式文本", "request": { "a": "1+1", "b": 2 }, "expect": "reject", "note": "把整个算式当参数传，绝不能偷偷执行" },
+  { "id": 14, "name": "传代码：os.system", "request": { "a": "__import__('os').system('id')", "b": 1 }, "expect": "reject", "note": "经典注入尝试：绝对不能执行" },
+  { "id": 15, "name": "传代码：exec", "request": { "a": 1, "b": "exec('x=1')" }, "expect": "reject", "note": "b 位置同样不能执行" },
+  { "id": 16, "name": "传空字符串", "request": { "a": "", "b": 2 }, "expect": "reject", "note": "空输入" },
+  { "id": 17, "name": "传 null", "request": { "a": null, "b": 2 }, "expect": "reject", "note": "null 不是数字" },
+  { "id": 18, "name": "传布尔值", "request": { "a": true, "b": 2 }, "expect": "reject", "note": "布尔不是数字（别把 true 当 1）" },
+  { "id": 19, "name": "传数组", "request": { "a": [1], "b": 2 }, "expect": "reject", "note": "数组不是数字" },
+  { "id": 20, "name": "传对象", "request": { "a": { "x": 1 }, "b": 2 }, "expect": "reject", "note": "对象不是数字" },
+  { "id": 21, "name": "超长数字字符串", "request": { "a": "99999999999999999999999999999999999999999999999999", "b": 1 }, "expect": "reject", "note": "虽然像数字但是字符串类型，长度也异常" },
+  { "id": 22, "name": "只传 a", "request": { "a": 1 }, "expect": "reject", "note": "缺 b 字段" },
+  { "id": 23, "name": "只传 b", "request": { "b": 2 }, "expect": "reject", "note": "缺 a 字段" },
+  { "id": 24, "name": "空参数对象", "request": {}, "expect": "reject", "note": "一个字段都没有" },
+  { "id": 25, "name": "传 emoji 表情", "request": { "a": "😈", "b": 1 }, "expect": "reject", "note": "表情符号不是数字" },
+  { "id": 26, "name": "请求体整个是数组", "request": [1, 2], "expect": "reject", "note": "整个请求体都不是对象，接口要能识别" },
+  { "id": 27, "name": "传 NaN 字样", "request": { "a": "NaN", "b": 1 }, "expect": "reject", "note": "伪装成特殊数字的字符串" },
+  { "id": 28, "name": "b 传 null", "request": { "a": 1, "b": null }, "expect": "reject", "note": "null 不是数字" },
+  { "id": 29, "name": "字段名完全写错", "request": { "x": 1, "y": 2 }, "expect": "reject", "note": "字段名不匹配" },
+  { "id": 30, "name": "传空格字符串", "request": { "a": "   ", "b": 1 }, "expect": "reject", "note": "空白不是数字" }
+]

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AgentSec-Lab{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">AgentSec-Lab 平台</a>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/runs">运行历史</a>
+      <a href="/docs" target="_blank">接口说明</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>AgentSec-Lab · 第一阶段 MVP · 平台方向（成员3）</footer>
+</body>
+</html>

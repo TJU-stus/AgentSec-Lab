@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# SQLite 数据库文件（本地数据，不入仓库）
+*.db
+
+# VS Code 本地设置
+.vscode/

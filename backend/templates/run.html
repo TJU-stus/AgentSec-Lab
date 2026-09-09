@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}运行 · {{ agent.name }} · AgentSec-Lab{% endblock %}
+{% block content %}
+
+<h1>运行：{{ agent.name }}</h1>
+{% if agent.description %}<p class="muted">{{ agent.description }}</p>{% endif %}
+
+<form method="post" action="/agents/{{ agent.id }}/run" class="card form">
+  <label>任务文字
+    <textarea name="task_text" rows="3" required>计算 123+456</textarea>
+  </label>
+  <button type="submit">运行</button>
+  <p class="muted">提交后调用运行调度器（Runner），完成后跳转到记录页。</p>
+</form>
+
+{% endblock %}
